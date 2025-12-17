@@ -1,0 +1,66 @@
+name: Build Releases
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build All Platforms
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.5'
+      
+      - name: Install dependencies
+        run: make deps
+      
+      - name: Build all platforms
+        run: make all
+      
+      - name: Create release archives
+        run: |
+          cd bin
+          for os in linux darwin windows; do
+            for arch in amd64 arm64; do
+              if [ -d "$os/$arch" ]; then
+                cd "$os/$arch"
+                if [ "$os" = "windows" ]; then
+                  zip "../../maria_repl_check-$os-$arch.zip" maria_repl_check.exe
+                else
+                  tar czf "../../maria_repl_check-$os-$arch.tar.gz" maria_repl_check
+                fi
+                cd ../..
+              fi
+            done
+          done
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: maria_repl_check-binaries
+          path: |
+            bin/*.tar.gz
+            bin/*.zip
+      
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            bin/*.tar.gz
+            bin/*.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,31 @@
+[Unit]
+Description=MariaDB Replication Monitor
+Documentation=https://github.com/yourusername/maria_repl_check
+After=network.target mysql.service mariadb.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/opt/daemons/myreplcheck
+ExecStart=/opt/daemons/myreplcheck/maria_repl_check -c /opt/daemons/myreplcheck/config.ini
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=maria_repl_check
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+# ProtectSystem=strict
+ProtectHome=true
+# ReadWritePaths=/opt/daemons/myreplcheck
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,19 @@
+[defaults]
+slave_parallel_max_queued = 262144
+slave_parallel_threads = 3
+slave_domain_parallel_threads = 2
+master_log_pos = 4
+max_backoff_seconds = 15
+backoff_success_count = 5
+
+[target1]
+host = 192.168.1.100
+port = 3306
+username = your_username_here
+password = your_password_here
+
+[target2]
+host = 192.168.1.101
+port = 3306
+username = your_username_here
+password = your_password_here
