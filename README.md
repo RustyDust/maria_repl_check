@@ -22,17 +22,50 @@ A high-performance Go application for monitoring and automatically fixing MariaD
 
 ### Prerequisites
 
-- Go 1.21 or later
+- Go 1.25.5 or later
 - MariaDB/MySQL server with replication configured
 
 ### Build from source
+
+#### Using Make (recommended)
+
+The project includes a Makefile for easy cross-platform builds:
+
+```bash
+# Install dependencies
+make deps
+
+# Build for your current platform
+make dev
+
+# Build for specific platforms
+make amd64    # Linux AMD64 (default)
+make arm64    # Linux ARM64
+make mactel   # macOS Intel
+make macarm   # macOS ARM (M1/M2/M3)
+make wintel   # Windows AMD64
+make winarm   # Windows ARM64
+
+# Build for all platforms
+make all
+
+# Clean build artifacts
+make clean
+
+# Show all available targets
+make help
+```
+
+Binaries are placed in `bin/<os>/<arch>/` directories.
+
+#### Manual build
 
 ```bash
 go mod download
 go build -o maria_repl_check
 ```
 
-### Cross-compile for Linux
+#### Manual cross-compile
 
 ```bash
 GOOS=linux GOARCH=amd64 go build -o maria_repl_check
